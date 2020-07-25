@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+// import Line from "./components/Line";
 import listIcone from "./list.png";
 import Input from "./components/Input";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -8,15 +9,38 @@ import { faSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 library.add(faSquare, faTrash);
 
 function App() {
-  // let taskState = (isDone, trash) => {
-  //   if (isDone === true) {
-  //     return "underline";
+  const deleteTask = (index) => {
+    const filteredList = taskList.filter((elem, i) => {
+      return index !== i;
+      //si index différent de i : true (donc on garde).
+      //si index === i :false (on jette)
+    });
 
-  //   }else if (trash === true) {
-  //     return "hidden";
-  //   }else {
-  //     return null;
-  // };
+    setTaskList(filteredList);
+  };
+
+  const renderDoneTasks = () => {
+    const doneTasks = taskList.filter((task, i) => {
+      return task.isDone;
+    });
+    return doneTasks.map((task, index) => {
+      return <p>{task.taskName}</p>;
+    });
+  };
+
+  /*
+  const filter = cb => {
+    const filteredList = [];
+
+    for (let i = 0 ; i < taskList.length ; i++) {
+      if (cb(taskList[i], i)) {
+        filteredList.push(taskList[i]);
+      }
+    }
+
+    setTaskList(filteredList);
+  };*/
+
   // Définition des différents états
 
   // Entrée dynamique de l'utilisateur
@@ -33,6 +57,8 @@ function App() {
     { taskName: "Brosser le chat", isDone: false, trash: false },
   ]);
 
+  // return taskList.map((task) => <div>{task.taskName}</div>);
+
   return (
     <div>
       <div className="container">
@@ -45,7 +71,7 @@ function App() {
           <div className="taskListStyle">
             {taskList.map((task, index) => {
               return (
-                <div className="todoList">
+                <div className="todoList" key={index}>
                   <p className={task.isDone === true ? "underline" : null}>
                     <FontAwesomeIcon
                       icon="square"
@@ -58,13 +84,13 @@ function App() {
 
                     <span>{task.taskName}</span>
 
-                    <FontAwesomeIcon
-                      icon="trash"
+                    <button
                       onClick={() => {
-                        const newTab = [...taskList];
-                        newTab[index].trash = true;
+                        deleteTask(index);
                       }}
-                    />
+                    >
+                      <FontAwesomeIcon icon="trash" />
+                    </button>
                   </p>
                 </div>
               );
@@ -89,6 +115,8 @@ function App() {
               Add task
             </button>
           </div>
+
+          <div>{renderDoneTasks()}</div>
         </main>
 
         {/* <footer>
